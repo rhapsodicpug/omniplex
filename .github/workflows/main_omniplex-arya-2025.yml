@@ -1,0 +1,33 @@
+name: Build and deploy Node.js app to Azure Web App - omniplex-arya-2025
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      id-token: write # Required for secure login to Azure
+      contents: read # Required to check out the code
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_861F4A1D36EB4B9FA0479C14B41B19BC }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_33546C6D06214B0BA65F70933B9D37AB }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_396ED16E6B494893BF9CBAB745916CE2 }}
+
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'omniplex-arya-2025'
+          slot-name: 'Production'
+          package: .
