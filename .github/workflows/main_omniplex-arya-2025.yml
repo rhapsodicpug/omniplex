@@ -9,6 +9,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
+    permissions:
+      id-token: write # Required for secure login to Azure
+      contents: read # Required to check out the code
+
     steps:
       - uses: actions/checkout@v4
 
