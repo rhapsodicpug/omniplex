@@ -47,7 +47,7 @@ run: |
           name: node-app
           path: release.zip
 
-  deploy:
+    deploy:
     runs-on: ubuntu-latest
     needs: build
     permissions:
