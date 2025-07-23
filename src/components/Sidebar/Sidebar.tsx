@@ -13,7 +13,6 @@ import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/store/authSlice";
 import { useDisclosure } from "@nextui-org/modal";
-
 import Logo from "../../../public/Logo.svg";
 import Menu from "../../../public/svgs/Menu.svg";
 import Pen from "../../../public/svgs/Pen.svg";
@@ -38,6 +37,20 @@ const Sidebar = () => {
   const [isClosing, setIsClosing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(width >= 512);
   const sidebarRef = useRef<HTMLDivElement>(null);
+
+  // --- START: NEW PAYMENT HANDLER FUNCTION ---
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch("/api/stripe", { method: "POST" });
+      const { url } = await response.json();
+      if (url) {
+        window.location.href = url; // Redirects the current page to Stripe
+      }
+    } catch (error) {
+      console.error("Failed to redirect to Stripe:", error);
+    }
+  };
+  // --- END: NEW PAYMENT HANDLER FUNCTION ---
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -110,21 +123,45 @@ const Sidebar = () => {
           <Image priority={true} src={Menu} alt="Menu" width={24} height={24} />
         </div>
         <div
-          className={styles.titleButton}
-          style={{ opacity: isSidebarOpen ? 0 : 1 }}
-          onClick={handleNewChat}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            opacity: isSidebarOpen ? 0 : 1,
+          }}
         >
-          <Image
-            priority={true}
-            src={Pen}
-            alt={"Pen"}
-            width={20}
-            height={20}
-            className={styles.titleButtonIcon}
-          />
-          <p className={styles.titleButtonText}>New Chat</p>
+          <div className={styles.titleButton} onClick={handleNewChat}>
+            <Image
+              priority={true}
+              src={Pen}
+              alt={"Pen"}
+              width={20}
+              height={20}
+              className={styles.titleButtonIcon}
+            />
+            <p className={styles.titleButtonText}>New Chat</p>
+          </div>
+          {/* --- START: UPDATED PAY BUTTON --- */}
+          <button
+            style={{
+              padding: "8px 18px",
+              fontSize: 15,
+              borderRadius: 6,
+              background: "#635bff",
+              color: "#fff",
+              border: "none",
+              cursor: "pointer",
+            }}
+            onClick={handleCheckout} // Use the new handler
+          >
+            Pay
+          </button>
+          {/* --- END: UPDATED PAY BUTTON --- */}
         </div>
       </div>
+
+      {/* The showPayment state and modal JSX have been removed */}
+
       {isSidebarOpen && (
         <>
           <div

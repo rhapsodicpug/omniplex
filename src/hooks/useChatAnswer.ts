@@ -11,7 +11,7 @@ import { getInitialMessages } from "../utils/utils";
 import { selectUserDetailsState } from "@/store/authSlice";
 import { selectAI } from "@/store/aiSlice";
 import { store } from "@/store/store";
-import { doc, updateDoc } from "@firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
 type UseChatAnswerProps = {
