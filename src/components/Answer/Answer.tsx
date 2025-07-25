@@ -1,15 +1,22 @@
+'use client';
+
 import React from "react";
 import styles from "./Answer.module.css";
 import Image from "next/image";
-import Markdown from "react-markdown";
+import { default as Markdown } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeKatex from "rehype-katex";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Skeleton } from "@nextui-org/skeleton";
 import { Citation } from "@/utils/types";
-
 import Logo from "../../../public/Logo.svg";
+
+import dynamic from 'next/dynamic';
+
+const SyntaxHighlighter = dynamic(
+  () => import('react-syntax-highlighter').then(mod => mod.Prism),
+  { ssr: false }
+) as any;
 
 type Props = {
   error: string;
@@ -21,10 +28,7 @@ type Props = {
 const Answer = (props: Props) => {
   const transform = (text: string) => {
     let transformedText = text.replace(/\\\[/g, "$$").replace(/\\\]/g, "$$");
-
-    transformedText = transformedText
-      .replace(/\\\(/g, "$")
-      .replace(/\\\)/g, "$");
+    transformedText = transformedText.replace(/\\\(/g, "$").replace(/\\\)/g, "$");
 
     transformedText = transformedText
       .split(/\[\{(\d+)\}\]/)
@@ -72,16 +76,18 @@ const Answer = (props: Props) => {
                     PreTag="div"
                     language={match[1]}
                     style={dark}
-                    wrapLines={true}
-                    wrapLongLines={true}
                     customStyle={{
                       margin: 0,
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
                     }}
                   >
                     {String(children).replace(/\n$/, "")}
                   </SyntaxHighlighter>
                 ) : (
-                  <code className={styles.code}>{children}</code>
+                  <code {...rest} className={styles.code}>
+                    {children}
+                  </code>
                 );
               },
             }}
